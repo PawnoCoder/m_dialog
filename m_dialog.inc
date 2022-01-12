@@ -1,6 +1,6 @@
 /*
 
-	About: Dialog Processor include v3.2
+	About: Dialog Processor include v3.3
 	Author: Noname
 
 */
@@ -33,29 +33,11 @@
 	#define M_DIALOG_DialogForPlayer 1
 #endif
 
-#if !defined _nex_ac_included
-	#if !defined FIX_const
-		#define FIX_const 0
-		#define M_DIALOG_FIX_CLEAR
-	#endif
+/*
+	Natives
+*/
 
-	#if !FIX_const
-		native MD_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-
-		#if defined _ALS_ShowPlayerDialog
-			#undef ShowPlayerDialog
-		#else
-			#define _ALS_ShowPlayerDialog
-		#endif
-
-		#define ShowPlayerDialog( MD_ShowPlayerDialog(
-
-		#if defined M_DIALOG_FIX_CLEAR
-			#undef M_DIALOG_FIX_CLEAR
-			#undef FIX_const
-		#endif
-	#endif
-#endif
+native __m_dialog__ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 
 /*
 	Define functions
@@ -95,11 +77,7 @@ static
 	Dialog_Open
 */
 
-#if !defined _nex_ac_included
 stock Dialog_Open(playerid, const function[], style, const caption[], const info[], const button1[], const button2[])
-#else
-stock Dialog_Open(playerid, const function[], style, caption[], info[], button1[], button2[])
-#endif
 {
 	d_player_open{playerid} = true;
 	d_player_function[playerid] = !"DR_";
@@ -111,9 +89,9 @@ stock Dialog_Open(playerid, const function[], style, caption[], info[], button1[
 			idx = funcidx(d_player_function[playerid]);
 
 		d_player_dialog_id[playerid] = (idx != -1) ? (idx) : (0);
-		return ShowPlayerDialog(playerid, d_player_dialog_id[playerid], style, caption, info, button1, button2);
+		return __m_dialog__ShowPlayerDialog(playerid, d_player_dialog_id[playerid], style, caption, info, button1, button2);
 	#else
-		return ShowPlayerDialog(playerid, PROCESSOR_DIALOG_ID, style, caption, info, button1, button2);
+		return __m_dialog__ShowPlayerDialog(playerid, PROCESSOR_DIALOG_ID, style, caption, info, button1, button2);
 	#endif
 }
 
@@ -135,7 +113,7 @@ stock Dialog_Close(playerid, bool:showDialog = true)
 	d_player_open{playerid} = false;
 
 	if (showDialog == true)
-		return ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, !" ", !" ", !" ", !"");
+		return __m_dialog__ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, !" ", !" ", !" ", !"");
 
 	return 1;
 }
